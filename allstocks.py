@@ -80,8 +80,36 @@ def info_for(ticker, columns="all"):
             
 # Test the filter and write function
 def writeToFilteredCSV():
-    filtered_df = filter_list()
-    print(filtered_df.head(10))    
     
+    # Take a filtered list of US-only companies' stocks
+    filtered_df = filter_list()
+    
+    filtered_df.to_csv(path_or_buf=os.path.join(project_dir, "filtered_stocks.csv"))
+    
+    
+    
+# Filters the already-filtered csv returned from writeToFilteredCSV and 
+# only stores those symbols which have data in yfinance
+def writeContentfulTickers():
+    raw_df = pd.read_csv(os.path.join(project_dir, "filtered_stocks.csv"))
+    
+    # Trim df to just symbols
+    essential_df = raw_df.iloc[:, 1:2]
+    
+    print(essential_df.head())
+    
+    # Iterate through each of the symbols and call yfinance data
+    
+    
+    # If there is data, store in a new dataframe
+    
+    # Else, continue
+    
+    # Write the finished dataframe to the same path, overwriting the previous filtered CSV
+    
+    
+
+
 writeToFilteredCSV()
+writeContentfulTickers()
 
