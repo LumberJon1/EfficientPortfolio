@@ -26,33 +26,6 @@ def summary(ticker):
     # TODO: This returns way too much data, most of it useless for our purposes.
     # We need to limit what this function returns to the basics.
 
-
-# pull historical prices for that stock
-def get_history(ticker, interval="1d", period="1y"
-                # start_date="2023-01-01", end_date="2023-09-14"
-                ):
-    # Interval can be "1d", "5d", "1wk", "1mo", or "3mo"
-    # start and end are given in str, dt, or int: "YYYY-MM-DD", datetime, or epoch respectively.
-    # Alternatively, we can use a period argument in place of start and end dates.
-    # period can equal "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", or "max".
-    
-    # TODO: Validate based on duration and/or interval to prevent out-of-bounds dates
-    
-    stock = yf.Ticker(ticker)
-    history = stock.history(interval=interval, period=period
-                            # start=start_date, end=end_date
-                            )
-    
-    # if len(history) == 0:
-    #     print("No history available.")
-    #     return
-    
-    # Reset index to make Date accessible
-    history = history.reset_index()
-    # print(history)
-    
-    # Return the dataframe
-    return history
     
 
 # evaluate the performance of that stock
@@ -69,7 +42,7 @@ def evaluate_performance(history):
         random_stock = allstocks.random_ticker(allstocks.filter_list())
         chosen_ticker = random_stock["Ticker"]
         print("\nEvaluating "+chosen_ticker+"...")
-        evaluate_performance(get_history(chosen_ticker))
+        evaluate_performance(allstocks.get_history(chosen_ticker))
         return
     
     # print("\n\nLength of the history array: "+str(length))
@@ -141,7 +114,7 @@ def build_portfolio(num_stocks=10, duration="1y", benchmark="SPY"):
         ticker = random_stock["Ticker"]
         company_name = random_stock["Name"]
         
-        i_data = evaluate_performance(get_history(ticker, period=duration))
+        i_data = evaluate_performance(allstocks.get_history(ticker, period=duration))
         
         # Strip out the beginning and ending dates from the initialized i_data
         
@@ -178,7 +151,7 @@ def build_portfolio(num_stocks=10, duration="1y", benchmark="SPY"):
     # with different randomized weights, and see if we can draw any conclusions from that?
     
     # Append the benchmark 
-    bench_data = evaluate_performance(get_history(benchmark, period=duration))
+    bench_data = evaluate_performance(allstocks.get_history(benchmark, period=duration))
     bench_dict = {
                 "Ticker": benchmark,
                 "Company": "-- Benchmark --",

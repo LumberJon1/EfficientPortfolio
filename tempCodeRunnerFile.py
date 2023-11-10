@@ -1,1 +1,1 @@
-print("\n\nLength of the history array: "+str(length))
+    # final_df = pd.DataFrame(contentful_tickers)
