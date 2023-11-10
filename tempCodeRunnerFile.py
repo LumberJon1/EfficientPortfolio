@@ -1,0 +1,1 @@
+print("\n\nLength of the history array: "+str(length))
