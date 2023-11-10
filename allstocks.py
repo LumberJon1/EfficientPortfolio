@@ -11,6 +11,9 @@ project_dir = os.path.dirname(filepath)
 all_symbols_path_stocks = "/AllSymbolsv2_Stocks.csv"
 all_symbols_path_etfs = "/AllSymbolsv2_ETFs.csv"
 
+# global store of date values to give context to CSV files written
+dateValues = []
+
 
 def filter_list(list="Stocks", country="USA"):
     print("path: "+project_dir+all_symbols_path_stocks)
@@ -115,9 +118,33 @@ def get_history(ticker, interval="1d", period="1y"
     # Return the dataframe
     return history
 
+
+# Intermediary function to store price data as df with proper headings
+def fetch_price(ticker):
+    price_data = get_history(ticker)
+    
+    # Evaluate whether any data was returned.
+    if price_data.empty:
+        return None
+    
+    else:
+        # If contentful data exists, store in a df and store the dates
+        dateValues.append(price_data[["Date"]])
+        
+        price_data = price_data[["Close"]]
+        price_data["Close"] = round(price_data["Close"], 2)
+        
+        # Rename column to be meaningful
+        price_data = price_data.rename(columns={"Close": ticker})
+
+        print("\nRaw price data: ", price_data)
+        
+        # price_data = price_data.to_dict()
+        # print("\nDictionaried price data: "+str(price_data))
+        return price_data
+
     
     
-# Filters the already-filtered csv returned from writeToFilteredCSV and 
 # only stores those symbols which have data in yfinance
 def writeContentfulTickers():
     raw_df = pd.read_csv(os.path.join(project_dir, "filtered_stocks.csv"))
@@ -131,42 +158,29 @@ def writeContentfulTickers():
     # print(symbols_dict)
     
     # list which will hold price data and store until df creation at the end of the function
-    contentful_tickers = pd.DataFrame({})
+    contentful_tickers = pd.DataFrame(columns=["Date"] + list(symbols_dict["Ticker"].values()))
+    print(contentful_tickers)
     
-    #  --development environment flag to limit yfinance API calls:
+    #  --development environment flag to limit yfinance API calls until code is working properly:
     iterCounter = 0
     
-    for item in symbols_dict["Ticker"].values():
+    # placeholder for price dataframes
+    dataframes = []
+    
+    for ticker in symbols_dict["Ticker"].values():
         if (iterCounter <= 10):
-            ticker = item
-            print("\nsearching for price data for "+item+"...")
+            print("\nsearching for price data for "+ticker+"...")
             
             # Call the getPriceData function
-            priceData = get_history(ticker=ticker)
+            priceData = fetch_price(ticker=ticker)
             
-            # Evaluate whether any data was returned.
-            if (priceData.empty):
-                print("Empty return - no price data")
-                
-            else:
-                # If there is data, store in a new dataframe
-                print(priceData.head(2))
-                priceData = priceData[["Date", "Close"]]
-                
-                priceData["Ticker"] = ticker
-                
-                # Convert the "Date" column to datetime and format in "MM/DD/YYYY"
-                priceData["Date"] = pd.to_datetime(priceData["Date"])
-                priceData["Date"] = priceData["Date"].dt.strftime("%m/%d/%Y")
-                
-                # Round prices to 2 decimals
-                priceData["Close"] = round(priceData["Close"], 2)
-                
-                # Append to contentful_tickers
-                contentful_tickers = pd.concat([contentful_tickers, priceData], axis=1)
-
-                print(priceData)
+            # If priceData is contentful, append to the dataframes array.
+            if (priceData is not None):
+                              
+                dataframes.append(priceData)
+                print("\n\nContentful Tickers at iteration "+str(iterCounter)+": "+str(contentful_tickers))
             
+            # Increment through limit iterCounter
             iterCounter += 1
             print("\nContentful Tickers: \n"+str(contentful_tickers))
             
@@ -175,7 +189,14 @@ def writeContentfulTickers():
             print("Development environment API call limit reached")
             break
         
-    
+    print(dataframes)
+    # Concatenate dataframes along columns
+    contentful_tickers = pd.concat(dataframes, axis=1)
+
+    # Sort the dataframe based on the "Date" column
+    # contentful_tickers["Date"] = dateValues
+    # contentful_tickers = contentful_tickers.sort_values(by="Date")
+   
     # Write the finished dataframe to the same path, overwriting the previous filtered CSV
     print(contentful_tickers.head(15))
     
