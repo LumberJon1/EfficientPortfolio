@@ -194,12 +194,29 @@ def writeContentfulTickers():
     contentful_tickers = pd.concat(dataframes, axis=1)
 
     # Sort the dataframe based on the "Date" column
-    # contentful_tickers["Date"] = dateValues
     # contentful_tickers = contentful_tickers.sort_values(by="Date")
-   
-    # Write the finished dataframe to the same path, overwriting the previous filtered CSV
-    print(contentful_tickers.head(15))
     
+    # Find the length of the df so that we can pull its dates
+    max_len_index = contentful_tickers.index[contentful_tickers.count(axis=1).idxmax()]
+    
+    # print test
+    print("\nMax len index: "+str(max_len_index))
+   
+    # Pull yfinance data for this stock and add as a Date column
+    # Get column
+    ticker = contentful_tickers.columns[max_len_index]
+    ticker_data = get_history(ticker)
+    dateValues = ticker_data["Date"]
+    contentful_tickers["Date"] = dateValues
+    
+    # Format the dates as "MM/DD/YYYY"
+    contentful_tickers['Date'] = contentful_tickers['Date'].dt.strftime('%m/%d/%Y')
+    
+    # Set dates as the index
+    contentful_tickers.set_index("Date", inplace=True)
+    
+    # Write the finished dataframe to the same directory
+    print(contentful_tickers.head(15))
     contentful_tickers.to_csv(path_or_buf=os.path.join(project_dir, "price_history.csv"))
     
 
