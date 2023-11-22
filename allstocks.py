@@ -92,8 +92,8 @@ def writeToFilteredCSV():
     
     
 # pull historical prices for that stock
-def get_history(ticker, interval="1d", period="1y"
-                # start_date="2023-01-01", end_date="2023-09-14"
+def get_history(ticker, interval="1d", period="1y",
+                start_date="2000-01-01", end_date="2023-11-14"
                 ):
     # Interval can be "1d", "5d", "1wk", "1mo", or "3mo"
     # start and end are given in str, dt, or int: "YYYY-MM-DD", datetime, or epoch respectively.
@@ -103,9 +103,7 @@ def get_history(ticker, interval="1d", period="1y"
     # TODO: Validate based on duration and/or interval to prevent out-of-bounds dates
     
     stock = yf.Ticker(ticker)
-    history = stock.history(interval=interval, period=period
-                            # start=start_date, end=end_date
-                            )
+    history = stock.history(interval=interval, period=period, start=start_date, end=end_date)
     
     # if len(history) == 0:
     #     print("No history available.")
@@ -219,8 +217,26 @@ def writeContentfulTickers():
     print(contentful_tickers.head(15))
     contentful_tickers.to_csv(path_or_buf=os.path.join(project_dir, "price_history.csv"))
     
+    
 
 
-writeToFilteredCSV()
-writeContentfulTickers()
+# Append new data to csv
+
+benchmark_history_df = get_history("SPY")
+benchmark_history_df = benchmark_history_df[["Date", "Close"]]
+benchmark_history_df['Date'] = benchmark_history_df['Date'].dt.strftime('%m/%d/%Y')
+benchmark_history_df.set_index("Date", inplace=True)
+print(benchmark_history_df.head(10))
+
+large_df = pd.read_csv(os.path.join(project_dir, "all_history.csv"))
+print(large_df.columns[-1])
+
+new_df = pd.merge(benchmark_history_df, large_df, on="Date", how="outer")
+print(new_df.columns[-1])
+
+print(new_df["SPY"].head(10))
+
+
+# writeToFilteredCSV()
+# writeContentfulTickers()
 
