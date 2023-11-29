@@ -222,19 +222,19 @@ def writeContentfulTickers():
 
 # Append new data to csv
 
-benchmark_history_df = get_history("SPY")
-benchmark_history_df = benchmark_history_df[["Date", "Close"]]
-benchmark_history_df['Date'] = benchmark_history_df['Date'].dt.strftime('%m/%d/%Y')
-benchmark_history_df.set_index("Date", inplace=True)
-print(benchmark_history_df.head(10))
+# benchmark_history_df = get_history("SPY")
+# benchmark_history_df = benchmark_history_df[["Date", "Close"]]
+# benchmark_history_df['Date'] = benchmark_history_df['Date'].dt.strftime('%m/%d/%Y')
+# benchmark_history_df.set_index("Date", inplace=True)
+# print(benchmark_history_df.head(10))
 
-large_df = pd.read_csv(os.path.join(project_dir, "all_history.csv"))
-print(large_df.columns[-1])
+# large_df = pd.read_csv(os.path.join(project_dir, "all_history.csv"))
+# print(large_df.columns[-1])
 
-new_df = pd.merge(benchmark_history_df, large_df, on="Date", how="outer")
-print(new_df.columns[-1])
+# new_df = pd.merge(benchmark_history_df, large_df, on="Date", how="outer")
+# print(new_df.columns[-1])
 
-print(new_df["SPY"].head(10))
+# print(new_df["SPY"].head(10))
 
 
 # writeToFilteredCSV()
