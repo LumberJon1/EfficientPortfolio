@@ -1,4 +1,19 @@
 # Efficient Portfolio Data
+  ## License
+  [<img src="https://img.shields.io/badge/License-MIT-blue.svg?logo=LOGO">](LINK)
+
+  ## Table of Contents
+  1. [Description](#Description)
+  1. [Installation](#Installation)
+  2. [Deployment](#Deployment)
+  3. [Usage](#Usage)
+  4. [Screenshots](#Screenshots)
+  5. [Contributing](#Contributing)
+  6. [Technologies](#Technologies)
+  7. [Tests](#Tests)
+  8. [Questions](#Questions)
+
+
   ## Description
   This program exists to provide historical data and research regarding what sorts of portfolios
   would have fared well in various time periods, durations, compositions, and sizes over approximately the last 23 years.  Historical data was collected from the yfinance API and written to a master CSV file, which then is randomly sampled and converted to dataframes with parameters such as size, start date, duration, and compared to a benchmark for that same period.
@@ -11,18 +26,6 @@
   * I hope to include a feature that will assess the impact of buying and selling shares of holdings during the holding period, to make the comparison more applicable to real-world portfolios.  This would ideally include after-tax return figures, given certain tax rate assumptions, and be smart enough to track cost basis for capital gains and losses.
   
 
-  ## License
-  [<img src="https://img.shields.io/badge/License-MIT-blue.svg?logo=LOGO">](LINK)
-
-  ## Table of Contents
-  1. [Installation](##Installation)
-  2. [Deployment](#Deployment)
-  3. [Usage](#Usage)
-  4. [Screenshots](#Screenshots)
-  5. [Contributing](#Contributing)
-  6. [Technologies](#Technologies)
-  7. [Tests](#Tests)
-  8. [Questions](#Questions)
 
   ## Installation
   * You will need to have Python and certain libraries installed before running the program.
