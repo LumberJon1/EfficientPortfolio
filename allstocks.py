@@ -9,42 +9,45 @@ project_dir = os.path.dirname(filepath)
 
 # Relative paths to CSV files
 all_symbols_path_stocks = "/AllSymbolsv2_Stocks.csv"
-all_symbols_path_etfs = "/AllSymbolsv2_ETFs.csv"
+all_symbols_path_etfs = "AllSymbolsv2_ETFs.csv"
 
 # global store of date values to give context to CSV files written
 dateValues = []
 
 
 def filter_list(list="Stocks", country="USA"):
-    print("path: "+project_dir+all_symbols_path_stocks)
     # Will read the AllSymbols CSV files (defaults to just stocks) and then organize
     # them to filter out ADRs, international stocks, etc. and create a dataframe of just
     # usable tickers to pass to the search and comparison functions
     
     # Check which list we are using and create DF appropriately
     if list == "Stocks":
-        raw_df = pd.read_csv(project_dir+all_symbols_path_stocks)
+        print("path: "+project_dir+all_symbols_path_stocks)
+        raw_df = pd.read_csv(project_dir+all_symbols_path_stocks)            
+        # check out the columns
+        # print(raw_df.columns)
         
+        # We only care about the first 5 columns, so we will shrink the df to that size
+        essential_df = raw_df.iloc[:, :5]
+        
+        # By default, sort for just US-based tickers, but return whichever country
+        # parameter is selected.
+        country_specific_df = essential_df[essential_df["Country"] == country]
+        
+        # Filter out tickers for ADRs or non-standard share classes, etc.
+        # Conditions might include 5-letter tickers that end in Q, F, or Y
+        filtered_df = country_specific_df[
+            ~country_specific_df["Ticker"].str.endswith(("Q", "F", "Y"))
+            ]
+              
     else:
-        raw_df = pd.read_csv(all_symbols_path_etfs)
+        print("path: "+os.path.join(project_dir, "AllSymbolsV2_ETFs.csv"))
+        raw_df = pd.read_csv(os.path.join(project_dir, "AllSymbolsV2_ETFs.csv"))
         
-    # check out the columns
-    # print(raw_df.columns)
+        # We only care about the first 2 columns, so we will shrink the df to that size
+        filtered_df = raw_df.iloc[:, :2]
     
-    # We only care about the first 5 columns, so we will shrink the df to that size
-    essential_df = raw_df.iloc[:, :5]
-    
-    # By default, sort for just US-based tickers, but return whichever country
-    # parameter is selected.
-    country_specific_df = essential_df[essential_df["Country"] == country]
-    
-    # Filter out tickers for ADRs or non-standard share classes, etc.
-    # Conditions might include 5-letter tickers that end in Q, F, or Y
-    filtered_df = country_specific_df[
-        ~country_specific_df["Ticker"].str.endswith(("Q", "F", "Y"))
-        ]
-    
-    # print(country_specific_df.head(20))
+    #  Return the filtered dataframe for processing by other methods
     return filtered_df
     
     
@@ -88,7 +91,7 @@ def writeToFilteredCSV():
     # Take a filtered list of US-only companies' stocks
     filtered_df = filter_list()
     
-    filtered_df.to_csv(path_or_buf=os.path.join(project_dir, "filtered_stocks.csv"))
+    filtered_df.to_csv(path_or_buf=os.path.join(project_dir, "filtered_symbols.csv"))
     
     
 # pull historical prices for that stock
@@ -145,7 +148,7 @@ def fetch_price(ticker):
     
 # only stores those symbols which have data in yfinance
 def writeContentfulTickers():
-    raw_df = pd.read_csv(os.path.join(project_dir, "filtered_stocks.csv"))
+    raw_df = pd.read_csv(os.path.join(project_dir, "filtered_symbols.csv"))
     
     # Trim df to just symbols
     essential_df = raw_df.iloc[:, 1:2]
@@ -235,6 +238,12 @@ def writeContentfulTickers():
 # print(new_df.columns[-1])
 
 # print(new_df["SPY"].head(10))
+
+etf_list = filter_list(list="ETFs")
+print(etf_list.head())
+# print("filepath: ", filepath)
+# print("project dir: ", project_dir)
+# print(os.path.join(project_dir, "AllSymbolsV2_ETFs.csv"))
 
 
 # writeToFilteredCSV()
