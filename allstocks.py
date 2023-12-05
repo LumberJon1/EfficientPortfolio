@@ -86,12 +86,12 @@ def info_for(ticker, columns="all"):
         
             
 # Test the filter and write function
-def writeToFilteredCSV():
+def writeToFilteredCSV(list_type="Stocks", output_name="filtered_symbols"):
     
     # Take a filtered list of US-only companies' stocks
-    filtered_df = filter_list()
+    filtered_df = filter_list(list=list_type)
     
-    filtered_df.to_csv(path_or_buf=os.path.join(project_dir, "filtered_symbols.csv"))
+    filtered_df.to_csv(path_or_buf=os.path.join(project_dir, str(output_name)+".csv"))
     
     
 # pull historical prices for that stock
@@ -147,8 +147,8 @@ def fetch_price(ticker):
     
     
 # only stores those symbols which have data in yfinance
-def writeContentfulTickers():
-    raw_df = pd.read_csv(os.path.join(project_dir, "filtered_symbols.csv"))
+def writeContentfulTickers(read_name="filtered_symbols", write_name="price_history"):
+    raw_df = pd.read_csv(os.path.join(project_dir, str(read_name)+".csv"))
     
     # Trim df to just symbols
     essential_df = raw_df.iloc[:, 1:2]
@@ -218,7 +218,7 @@ def writeContentfulTickers():
     
     # Write the finished dataframe to the same directory
     print(contentful_tickers.head(15))
-    contentful_tickers.to_csv(path_or_buf=os.path.join(project_dir, "price_history.csv"))
+    contentful_tickers.to_csv(path_or_buf=os.path.join(project_dir, str(write_name)+".csv"))
     
     
 
@@ -239,8 +239,10 @@ def writeContentfulTickers():
 
 # print(new_df["SPY"].head(10))
 
-etf_list = filter_list(list="ETFs")
-print(etf_list.head())
+# etf_list = writeToFilteredCSV(list_type="ETFs")
+# print(etf_list.head(10))
+
+writeContentfulTickers(write_name="all_history_etf")
 # print("filepath: ", filepath)
 # print("project dir: ", project_dir)
 # print(os.path.join(project_dir, "AllSymbolsV2_ETFs.csv"))
