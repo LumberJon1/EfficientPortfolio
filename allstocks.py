@@ -90,6 +90,7 @@ def writeToFilteredCSV(list_type="Stocks", output_name="filtered_symbols"):
     
     # Take a filtered list of US-only companies' stocks
     filtered_df = filter_list(list=list_type)
+    filtered_df = filtered_df.sort_values(by="Ticker", ascending=True)
     
     filtered_df.to_csv(path_or_buf=os.path.join(project_dir, str(output_name)+".csv"))
     
@@ -138,7 +139,7 @@ def fetch_price(ticker):
         # Rename column to be meaningful
         price_data = price_data.rename(columns={"Close": ticker})
 
-        print("\nRaw price data: ", price_data)
+        # print("\nRaw price data: ", price_data)
         
         # price_data = price_data.to_dict()
         # print("\nDictionaried price data: "+str(price_data))
@@ -163,13 +164,15 @@ def writeContentfulTickers(read_name="filtered_symbols", write_name="price_histo
     print(contentful_tickers)
     
     #  --development environment flag to limit yfinance API calls until code is working properly:
-    # iterCounter = 0
+    iterCounter = 0
     
     # placeholder for price dataframes
     dataframes = []
     
+    print("\nSymbols_dict length: "+str(len(symbols_dict["Ticker"])))
+    
     for ticker in symbols_dict["Ticker"].values():
-    # if (iterCounter <= 10):
+    # if (iterCounter <= 100):
         print("\nsearching for price data for "+ticker+"...")
         
         # Call the getPriceData function
@@ -182,13 +185,13 @@ def writeContentfulTickers(read_name="filtered_symbols", write_name="price_histo
             # print("\n\nContentful Tickers at iteration "+str(iterCounter)+": "+str(contentful_tickers))
         
         # Increment through limit iterCounter
-        # iterCounter += 1
+        iterCounter += 1
         # print("\nContentful Tickers: \n"+str(contentful_tickers))
         
     # Exit once counter has been reached
     # else:
-    #     print("Development environment API call limit reached")
-    #     break
+        # print("Development environment API call limit reached")
+        # break
         
     print(dataframes)
     # Concatenate dataframes along columns
@@ -211,10 +214,10 @@ def writeContentfulTickers(read_name="filtered_symbols", write_name="price_histo
     contentful_tickers["Date"] = dateValues
     
     # Format the dates as "MM/DD/YYYY"
-    contentful_tickers['Date'] = contentful_tickers['Date'].dt.strftime('%m/%d/%Y')
+    # contentful_tickers['Date'] = contentful_tickers['Date'].dt.strftime('%m/%d/%Y')
     
     # Set dates as the index
-    contentful_tickers.set_index("Date", inplace=True)
+    # contentful_tickers.set_index("Date", inplace=True)
     
     # Write the finished dataframe to the same directory
     print(contentful_tickers.head(15))
