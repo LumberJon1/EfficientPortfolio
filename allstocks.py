@@ -163,32 +163,32 @@ def writeContentfulTickers(read_name="filtered_symbols", write_name="price_histo
     print(contentful_tickers)
     
     #  --development environment flag to limit yfinance API calls until code is working properly:
-    iterCounter = 0
+    # iterCounter = 0
     
     # placeholder for price dataframes
     dataframes = []
     
     for ticker in symbols_dict["Ticker"].values():
-        if (iterCounter <= 10):
-            print("\nsearching for price data for "+ticker+"...")
-            
-            # Call the getPriceData function
-            priceData = fetch_price(ticker=ticker)
-            
-            # If priceData is contentful, append to the dataframes array.
-            if (priceData is not None):
-                              
-                dataframes.append(priceData)
-                print("\n\nContentful Tickers at iteration "+str(iterCounter)+": "+str(contentful_tickers))
-            
-            # Increment through limit iterCounter
-            iterCounter += 1
-            print("\nContentful Tickers: \n"+str(contentful_tickers))
-            
-        # Exit once counter has been reached
-        else:
-            print("Development environment API call limit reached")
-            break
+    # if (iterCounter <= 10):
+        print("\nsearching for price data for "+ticker+"...")
+        
+        # Call the getPriceData function
+        priceData = fetch_price(ticker=ticker)
+        
+        # If priceData is contentful, append to the dataframes array.
+        if (priceData is not None):
+                            
+            dataframes.append(priceData)
+            # print("\n\nContentful Tickers at iteration "+str(iterCounter)+": "+str(contentful_tickers))
+        
+        # Increment through limit iterCounter
+        # iterCounter += 1
+        # print("\nContentful Tickers: \n"+str(contentful_tickers))
+        
+    # Exit once counter has been reached
+    # else:
+    #     print("Development environment API call limit reached")
+    #     break
         
     print(dataframes)
     # Concatenate dataframes along columns
