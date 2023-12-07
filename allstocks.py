@@ -245,7 +245,7 @@ def writeContentfulTickers(read_name="filtered_symbols", write_name="price_histo
 # etf_list = writeToFilteredCSV(list_type="ETFs")
 # print(etf_list.head(10))
 
-writeContentfulTickers(write_name="all_history_etf")
+# writeContentfulTickers(write_name="all_history_etf")
 # print("filepath: ", filepath)
 # print("project dir: ", project_dir)
 # print(os.path.join(project_dir, "AllSymbolsV2_ETFs.csv"))
@@ -253,4 +253,5 @@ writeContentfulTickers(write_name="all_history_etf")
 
 # writeToFilteredCSV()
 # writeContentfulTickers()
+# print("\nproject_dir: "+str(project_dir))
 
